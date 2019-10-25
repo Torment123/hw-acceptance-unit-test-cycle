@@ -34,6 +34,13 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck,rating_list|
 end    
 
 Then /I should see all the movies/ do
-    rows = page.all("table#movies>tbody tr").count
-    expect(rows).to eq Movie.count
+  # Make sure that all the movies in the app are visible in the table
+  Movie.all.each do |movie|
+    step %{I should see "#{movie.title}"}
+  end
+end
+
+Then /^the director of "(.*)" should be "(.*)"$/ do |title_value, director_value|
+  movie = Movie.find_by_title(title_value)
+  expect(movie.director).to eq(director_value)
 end
